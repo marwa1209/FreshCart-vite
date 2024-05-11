@@ -5,7 +5,6 @@ import { Register, SignIn } from "./auth";
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { TokenContext } from "@/context/tokenContext";
-import { addToCart, deleteFromCart, updateProductQuan } from "./cart";
 
 //register
 export function useRegister() {
@@ -32,26 +31,4 @@ export function useSignIn() {
     },
   });
 }
-// ******************Cart***************************
-export function useaddToCart() {
-  return useMutation({
-    mutationFn: (id: number) => addToCart(id),
-  });
-}
-export function usedeleteFromCart() {
-  return useMutation({
-    mutationFn: (id: any) => deleteFromCart(id),
-  });
-}
-export function useupdateProductQuan() {
-  return useMutation({
-    mutationFn: ({ id, count }: { id: number; count: number }) =>
-      updateProductQuan(id, count),
-    onSuccess: (data) => {
-      console.log(data);
-    },
-    onError: (error) => {
-      console.log(error);
-    },
-  });
-}
+

@@ -5,8 +5,9 @@ import { Link, useNavigate } from "react-router-dom";
 import PriceFormat from "../PriceFormat/PriceFormat";
 import Loader from "../Loader/Loader";
 import { useProducts } from "@/services/queries";
-import { useaddToCart } from "@/services/mutaions";
 import toast, { Toaster } from "react-hot-toast";
+import { useMutation } from "@tanstack/react-query";
+import { addToCart } from "@/services/cart";
 interface ProductsProps {
   limit?: boolean;
 }
@@ -21,37 +22,54 @@ interface product {
 }
 const Products: FC<ProductsProps> = ({ limit }) => {
   const navigate = useNavigate();
-  const { isPending: productsPending, data: productsData } = useProducts();
-  const { mutate } = useaddToCart();
-  function addCart(id: number): void {
-    mutate(id, {
-      onSuccess: () => {
-        toast.success("Product Added successfully", {
-          duration: 2000,
-          position: "bottom-right",
-          icon: "👏",
-        });
-      },
-      onError: () => {
-        toast.error("error");
-      },
-    });
+ const { data, error, isError, isPending } =
+   useProducts();
+   console.log(data)
+  //post (add To cart)
+  const { mutate } = useMutation({
+    mutationFn: (id: number) => addToCart(id),
+    onSuccess: () => {
+      toast.success("Product Added successfully", {
+        duration: 2000,
+        position: "bottom-right",
+        icon: "👏",
+      });
+    },
+    onError: () => {
+      toast.error("error");
+    },
+  });
 
+  function addCart(id: number): void {
+    mutate(id);
     if (localStorage.getItem("userToken") == null) {
       navigate("/login");
     }
   }
-
-  return (
-    <>
-      {productsPending ? (
+  if (isPending) {
+    return (
+      <>
         <Loader />
-      ) : (
+      </>
+    );
+  }
+  if (isError && !isPending) {
+    return <h3>error getting Products data</h3>;
+  }
+  if (data?.pages[0]?.data.length === 0) {
+    return (
+      <div className="container m-auto my-12 bg-light-color p-3 ">
+        <h1> No Products</h1>
+      </div>
+    );
+  }
+    if (data?.pages[0]?.data.length > 0) {
+      return (
         <div className=" my-16 container m-auto">
           <h2>OUR Products</h2>
           <div className="flex flex-wrap">
-            {productsData?.data
-              .slice(0, limit ? 18 : productsData.data.length)
+            {data?.pages[0]?.data
+              .slice(0, limit ? 18 : data?.pages[0]?.data.length)
               .map((product: product, index: number) => (
                 <div
                   key={index}
@@ -92,9 +110,8 @@ const Products: FC<ProductsProps> = ({ limit }) => {
               ))}
           </div>
         </div>
-      )}
-    </>
-  );
+      );
+    }
 };
 
 export default Products;
