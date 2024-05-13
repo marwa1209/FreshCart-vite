@@ -1,41 +1,58 @@
 /** @format */
-import { useInfiniteQuery, useQuery, type InfiniteData, type QueryFunctionContext } from "@tanstack/react-query";
-import { getCategories } from "./categories";
-import { getProducts } from "./products";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { getCategories, getCategoriesInfinite } from "./categories";
+import { getProductsInfinite ,getProducts } from "./products";
 import { getCart } from "./cart";
 
 //getCategories
 export function useCategories() {
-  return useQuery({ queryKey: ["categories"], queryFn:getCategories});
+  return useQuery({ queryKey: ["categories"], queryFn: getCategories });
 }
-
-//Getproducts
-
+//getProducts
 export function useProducts() {
-  return useInfiniteQuery<
-    any,
-    Error,
-    InfiniteData<any, unknown>,
-    string[],
-    number
-  >({
-    queryKey: ["Products"],
-    queryFn: async ({ pageParam = 1 }: QueryFunctionContext<string[]>) => {
-      const pageNumber: number = pageParam as number; // Ensure pageParam is treated as number
-      const response = await getProducts(pageNumber);
-      return response;
-    },
-    getNextPageParam: (lastPage) => {
-      if (lastPage && lastPage.info) {
-        const nextPage = lastPage.info.page + 1;
-        return nextPage <= lastPage.info.totalPages ? nextPage : undefined;
+  return useQuery({ queryKey: ["featuredProducts"], queryFn: getProducts });
+}
+//getCategories infinite
+export function useCategoriesinfinite() {
+  return useInfiniteQuery({
+    queryKey: ["AllCategories"],
+    queryFn: ({ pageParam }) => getCategoriesInfinite({ pageParam }),
+    initialPageParam: 1,
+    getPreviousPageParam: (firstPage: any) => {
+      if (firstPage.metadata.currentPage <= firstPage.metadata.numberOfPages) {
+        return firstPage.metadata.currentPage - 1;
       }
       return undefined;
     },
-    initialData: { pages: [], pageParams: [1] },
-    initialPageParam: 1,
+    getNextPageParam: (lastPage: any) => {
+      if (lastPage.metadata.currentPage !== lastPage.metadata.numberOfPages) {
+        return lastPage.metadata.currentPage + 1;
+      }
+      return undefined;
+    },
   });
 }
+//GetproductsInfinite
+export function useProductsInfinite() {
+  return useInfiniteQuery({
+    queryKey: ["Products"],
+    queryFn: ({ pageParam }) => getProductsInfinite({ pageParam }),
+    initialPageParam: 1,
+    getPreviousPageParam: (firstPage: any) => {
+      if (firstPage.metadata.currentPage <= firstPage.metadata.numberOfPages) {
+        return firstPage.metadata.currentPage - 1;
+      }
+      return undefined;
+    },
+    getNextPageParam: (lastPage: any) => {
+      if (lastPage.metadata.currentPage !== lastPage.metadata.numberOfPages) {
+        return lastPage.metadata.currentPage + 1;
+      }
+      return undefined;
+    },
+  });
+}
+
 // ******************Cart***************************
 
 //GetCart

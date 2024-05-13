@@ -1,16 +1,17 @@
 /** @format */
 
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import PriceFormat from "../PriceFormat/PriceFormat";
 import Loader from "../Loader/Loader";
-import { useProducts } from "@/services/queries";
+import { useProductsInfinite } from "@/services/queries";
 import toast, { Toaster } from "react-hot-toast";
 import { useMutation } from "@tanstack/react-query";
 import { addToCart } from "@/services/cart";
+import { useInView } from "react-intersection-observer";
 interface ProductsProps {
-  limit?: boolean;
 }
+
 interface product {
   id: number;
   title: string;
@@ -20,11 +21,23 @@ interface product {
   price: number;
   ratingsAverage: number;
 }
-const Products: FC<ProductsProps> = ({ limit }) => {
+const Products: FC<ProductsProps> = () => {
   const navigate = useNavigate();
- const { data, error, isError, isPending } =
-   useProducts();
-   console.log(data)
+  const {
+    data,
+    isError,
+    error,
+    isPending,
+    fetchNextPage,
+    isFetchingNextPage,
+    hasNextPage,
+  } = useProductsInfinite();
+  const { ref, inView } = useInView();
+  useEffect(() => {
+    if (inView && hasNextPage) {
+      fetchNextPage();
+    }
+  }, [inView, hasNextPage ,fetchNextPage]);
   //post (add To cart)
   const { mutate } = useMutation({
     mutationFn: (id: number) => addToCart(id),
@@ -39,13 +52,13 @@ const Products: FC<ProductsProps> = ({ limit }) => {
       toast.error("error");
     },
   });
-
   function addCart(id: number): void {
     mutate(id);
     if (localStorage.getItem("userToken") == null) {
       navigate("/login");
     }
   }
+
   if (isPending) {
     return (
       <>
@@ -54,7 +67,7 @@ const Products: FC<ProductsProps> = ({ limit }) => {
     );
   }
   if (isError && !isPending) {
-    return <h3>error getting Products data</h3>;
+    return <h3>error getting Products data:{error.message}</h3>;
   }
   if (data?.pages[0]?.data.length === 0) {
     return (
@@ -63,22 +76,23 @@ const Products: FC<ProductsProps> = ({ limit }) => {
       </div>
     );
   }
-    if (data?.pages[0]?.data.length > 0) {
-      return (
-        <div className=" my-16 container m-auto">
-          <h2>OUR Products</h2>
-          <div className="flex flex-wrap">
-            {data?.pages[0]?.data
-              .slice(0, limit ? 18 : data?.pages[0]?.data.length)
-              .map((product: product, index: number) => (
+  if (data?.pages[0]?.data.length > 0) {
+    return (
+      <div className="my-16 container m-auto">
+        <h2>OUR Products</h2>
+        {data.pages.map((page: any, pageIndex: number) => (
+          <div key={pageIndex}>
+            <div className="flex flex-wrap ">
+              {page.data.map((product: product) => (
                 <div
-                  key={index}
+                  key={product.id}
+                  ref={ref}
                   className="item xl:w-1/6 lg:w-1/3 md:w-3/6 min-[420px]:w-full my-3"
                 >
                   <Link to={"/details/" + product.id}>
-                    <div className="px-4  cursor-pointer">
+                    <div className="px-4 cursor-pointer">
                       <img
-                        className="mb-3 h-64  xl:w-full  min-[420px]:w-[80%] block m-auto"
+                        className="mb-3 h-64 xl:w-full min-[420px]:w-[80%] block m-auto"
                         src={product.imageCover}
                         alt={product.title}
                       />
@@ -108,10 +122,16 @@ const Products: FC<ProductsProps> = ({ limit }) => {
                   <Toaster />
                 </div>
               ))}
+            </div>
           </div>
-        </div>
-      );
-    }
+        ))}
+
+        {isFetchingNextPage && (
+          <i className="fa-solid fa-circle-notch fa-spin me-2"></i>
+        )}
+      </div>
+    );
+  }
 };
 
 export default Products;
