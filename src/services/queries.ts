@@ -1,6 +1,10 @@
 /** @format */
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
-import { getCategories, getCategoriesInfinite } from "./categories";
+import {
+  getBrandsInfinite,
+  getCategories,
+  getCategoriesInfinite,
+} from "./categories";
 import { getProductsInfinite ,getProducts } from "./products";
 import { getCart } from "./cart";
 
@@ -52,7 +56,26 @@ export function useProductsInfinite() {
     },
   });
 }
-
+//getBrands
+export function useBrandsInfinite() {
+  return useInfiniteQuery({
+    queryKey: ["Brands"],
+    queryFn: ({ pageParam }) => getBrandsInfinite({ pageParam }),
+    initialPageParam: 1,
+    getPreviousPageParam: (firstPage: any) => {
+      if (firstPage.metadata.currentPage <= firstPage.metadata.numberOfPages) {
+        return firstPage.metadata.currentPage - 1;
+      }
+      return undefined;
+    },
+    getNextPageParam: (lastPage: any) => {
+      if (lastPage.metadata.currentPage !== lastPage.metadata.numberOfPages) {
+        return lastPage.metadata.currentPage + 1;
+      }
+      return undefined;
+    },
+  });
+}
 // ******************Cart***************************
 
 //GetCart

@@ -15,7 +15,6 @@ const Categories: FC<CategoriesProps> = () => {
     isFetchingNextPage,
     hasNextPage,
   } = useCategoriesinfinite();
-  console.log(data)
     const { ref, inView } = useInView();
   useEffect(() => {
     if (inView && hasNextPage) {
