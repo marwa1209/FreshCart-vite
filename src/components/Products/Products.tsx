@@ -1,16 +1,12 @@
 /** @format */
 
 import { FC, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import PriceFormat from "../PriceFormat/PriceFormat";
 import Loader from "../Loader/Loader";
 import { useProductsInfinite } from "@/services/queries";
-import toast, { Toaster } from "react-hot-toast";
-import { useMutation } from "@tanstack/react-query";
-import { addToCart } from "@/services/cart";
 import { useInView } from "react-intersection-observer";
-interface ProductsProps {
-}
+interface ProductsProps {}
 
 interface product {
   id: number;
@@ -22,7 +18,6 @@ interface product {
   ratingsAverage: number;
 }
 const Products: FC<ProductsProps> = () => {
-  const navigate = useNavigate();
   const {
     data,
     isError,
@@ -37,27 +32,7 @@ const Products: FC<ProductsProps> = () => {
     if (inView && hasNextPage) {
       fetchNextPage();
     }
-  }, [inView, hasNextPage ,fetchNextPage]);
-  //post (add To cart)
-  const { mutate } = useMutation({
-    mutationFn: (id: number) => addToCart(id),
-    onSuccess: () => {
-      toast.success("Product Added successfully", {
-        duration: 2000,
-        position: "bottom-right",
-        icon: "👏",
-      });
-    },
-    onError: () => {
-      toast.error("error");
-    },
-  });
-  function addCart(id: number): void {
-    mutate(id);
-    if (localStorage.getItem("userToken") == null) {
-      navigate("/login");
-    }
-  }
+  }, [inView, hasNextPage, fetchNextPage]);
 
   if (isPending) {
     return (
@@ -82,44 +57,36 @@ const Products: FC<ProductsProps> = () => {
         <h2>OUR Products</h2>
         {data.pages.map((page: any, pageIndex: number) => (
           <div key={pageIndex}>
-            <div className="flex flex-wrap ">
+            <div className="grid grid-flow-row gap-4 grid-cols-1 xl:grid-cols-3 sm:grid-cols-2 ">
               {page.data.map((product: product) => (
                 <div
                   key={product.id}
                   ref={ref}
-                  className="item xl:w-1/6 lg:w-1/3 md:w-3/6 min-[420px]:w-full my-3"
+                  className="aspect-square transition-all animate-fadeIn"
                 >
                   <Link to={"/details/" + product.id}>
-                    <div className="px-4 cursor-pointer">
+                    <div className="group flex flex-col h-full w-full items-center justify-center overflow-hidden rounded-lg border hover:border-blue-600 relative ">
                       <img
-                        className="mb-3 h-64 xl:w-full min-[420px]:w-[80%] block m-auto"
+                        className="object-contain w-full h-full transition duration-300 ease-in-out group-hover:scale-105"
                         src={product.imageCover}
                         alt={product.title}
                       />
-                      <h3 className="text-sm text-main-color">
-                        {product.category.name}
-                      </h3>
-                      <h4 className="text-xl mb-4">
-                        {product.title.split(" ").slice(0, 2).join(" ")}
-                      </h4>
-                      <div className="flex justify-between align-middle">
-                        <PriceFormat price={product.price} />
-                        <div>
-                          <i className="fa-solid fa-star text-rating-color"></i>
-                          <span className="text-gray-600">
-                            {product.ratingsAverage}
-                          </span>
+                      <div className="absolute bottom-0 left-0 flex w-full px-4 pb-4 ">
+                        <div className="flex items-center rounded-full border bg-white/70 p-1 text-xs font-semibold text-black">
+                          <h3 className="me-4 pl-2">
+                            {product.title.split(" ").slice(0, 2).join(" ")}{" "}
+                            {product.category.name
+                              .split(" ")
+                              .slice(0, 2)
+                              .join(" ")}
+                          </h3>
+                          <p className="rounded-full bg-blue-600 p-2 text-white">
+                            <PriceFormat price={product.price} />
+                          </p>
                         </div>
                       </div>
                     </div>
                   </Link>
-                  <button
-                    className="btn-main py-1 rounded-md mx-auto"
-                    onClick={() => addCart(product.id)}
-                  >
-                    Add To Cart
-                  </button>
-                  <Toaster />
                 </div>
               ))}
             </div>
