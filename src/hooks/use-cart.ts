@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-const Base_URl = "https://ecommerce.routemisr.com";
+
 let headers = {
   headers: {
     token: localStorage.getItem("userToken"),
@@ -11,7 +11,7 @@ let headers = {
 //add
 export const addToCart = async (id: number) => {
   const response = await axios.post(
-    `${Base_URl}/api/v1/cart`,
+    `${import.meta.env.VITE_BASE_URL}/api/v1/cart`,
     { productId: id },
     headers
   );
@@ -19,24 +19,29 @@ export const addToCart = async (id: number) => {
 };
 //get
 export const getCart = async () => {
-  const response = await axios.get(`${Base_URl}/api/v1/cart`, headers);
+  const response = await axios.get(
+    `${import.meta.env.VITE_BASE_URL}/api/v1/cart`,
+    headers
+  );
   return response.data;
 };
 //delete
 export const deleteFromCart = async (id: number) => {
-  const response = await axios.delete(`${Base_URl}/api/v1/cart/${id}`, headers);
+  const response = await axios.delete(
+    `${process.env.BASE_URL}/api/v1/cart/${id}`,
+    headers
+  );
   return response.data;
 };
 //update
 export const updateProductQuan = async (id: any, count: number) => {
   const response = await axios.put(
-    `${Base_URl}/api/v1/cart/${id}`,
+    `${import.meta.env.VITE_BASE_URL}/api/v1/cart/${id}`,
     { count },
     headers
   );
   return response.data;
 };
-
 //GetCart
 export function useGetCart() {
   return useQuery({ queryKey: ["cartItems"], queryFn: getCart });

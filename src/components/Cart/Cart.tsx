@@ -23,7 +23,8 @@ interface product {
 const Cart: FC<CartProps> = () => {
   //getData
   const queryClient = useQueryClient();
-  let { isPending, data, isError } = useGetCart();
+  let { isPending, data, isError ,error} = useGetCart();
+  console.log(error);
   //delete
   const { mutate: mutateDelete } = useMutation({
     mutationFn: (id: any) => deleteFromCart(id),
