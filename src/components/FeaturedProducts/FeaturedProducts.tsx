@@ -22,7 +22,6 @@ interface product {
 const FeaturedProducts: FC<FeaturedProductsProps> = () => {
   const navigate = useNavigate();
   const { data, error, isError, isPending } = useFeaturedProducts();
-  console.log(data);
   const { mutate } = useMutation({
     mutationFn: (id: number) => addToCart(id),
     onSuccess: () => {
