@@ -19,16 +19,19 @@ export function useRegister() {
 }
 //login
 export function useSignIn() {
-  let { setToken } = useContext(TokenContext);
+  let { setToken, setuserData} = useContext(TokenContext);
   const navigate = useNavigate();
   return useMutation({
     mutationFn: (data: any) => SignIn(data),
     onSuccess: (data) => {
       localStorage.setItem("userToken", data.token);
+      localStorage.setItem("userData", JSON.stringify(data.user));
       let token = localStorage.getItem("userToken");
+      let userData: any = localStorage.getItem("userData");
+      userData = JSON.parse(userData);
+      setuserData(userData);
       setToken(token);
       navigate("/home");
     },
   });
 }
-

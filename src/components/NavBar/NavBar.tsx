@@ -1,220 +1,144 @@
 /** @format */
 
-import React, { FC, useContext } from "react";
+import { FC, useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../../assets/images/freshcart-logo.svg";
 import { TokenContext } from "@/context/tokenContext";
-import { Navbar, Collapse, IconButton } from "@material-tailwind/react";
-
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 interface NavBarProps {}
-
 const NavBar: FC<NavBarProps> = () => {
-  const [openNav, setOpenNav] = React.useState(false);
   let navigate = useNavigate();
-  const { token, setToken } = useContext(TokenContext);
+  const [showMenu, setShowMenu] = useState(false);
+  const { token, setToken, userdata } = useContext(TokenContext);
+  let { name, email } = JSON.parse(userdata) || {};
+  const displayMenueBars = () => {
+    setShowMenu(!showMenu);
+  };
   function logOut() {
     localStorage.removeItem("userToken");
     setToken(null);
     navigate("/login");
   }
-  React.useEffect(() => {
-    window.addEventListener(
-      "resize",
-      () => window.innerWidth >= 960 && setOpenNav(false)
-    );
-  }, []);
-  const navList = (
-    <>
-      <ul className=" text-gray-500 mt-2 mb-4 flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
-        <li>
-          <Link to={"/home"}>Home</Link>
-        </li>
-        <li className={`${token ? "block" : "hidden"}`}>
-          <Link to={"/cart"}>Cart</Link>
-        </li>
-        <li>
-          <Link to={"/products"}>Products</Link>
-        </li>
-        <li>
-          <Link to={"/categories"}>Categories</Link>
-        </li>
-        <li>
-          <Link to={"/brands"}>Brands</Link>
-        </li>
-      </ul>
-    </>
-  );
-
   return (
-    <>
-      <Navbar
-        className=" h-max max-w-full rounded-none px-4 py-5 justify-center align-middle lg:px-8 lg:py-4 "
-        placeholder=""
-        onPointerEnterCapture={() => {}}
-        onPointerLeaveCapture={() => {}}
-      >
-        <div className="container m-auto">
-          <div className="flex items-center justify-between text-blue-gray-900">
-            <Link className="logo me-10" to={"/home"}>
-              <img src={logo} alt="Logo" />
+    <nav className="py-4 w-full  relative z-30">
+      <div className="container mx-auto flex justify-between items-center px-2">
+        <Link className={`logo me-10`} to={"home"}>
+          <img src={logo} alt="Logo" />
+        </Link>
+        {token ? (
+          <ul
+            className={`lg:flex gap-4 me-auto text-gray-500 list-none hidden`}
+          >
+            <li>
+              <Link to={"home"}>Home</Link>
+            </li>
+            <li>
+              <Link to={"cart"}>Cart</Link>
+            </li>
+            <li>
+              <Link to={"products"}>Products</Link>
+            </li>
+            <li>
+              <Link to={"categories"}>Categories</Link>
+            </li>
+            <li>
+              <Link to={"brands"}>Brands</Link>
+            </li>
+          </ul>
+        ) : null}
+        {/* Nav-icons-left */}
+        <ul className="lg:flex gap-4 ms-auto list-none hidden">
+          <li className={`${token ? "hidden" : "block"}`}>
+            <Link className="text-capitalize cursor-pointer" to={"register"}>
+              Register
             </Link>
-            <div className="flex items-center justify-between w-3/4 gap-4 ">
-              <div className="me-auto hidden lg:block">{navList}</div>
-              <div className="flex ms-auto items-center justify-between gap-x-1">
-                <ul className=" gap-4  list-none hidden lg:flex">
-                  <li>
-                    <Link
-                      className="nav-link"
-                      to={"https://www.instagram.com/"}
-                      target="_blank"
-                    >
-                      <i className="fab fa-instagram"></i>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      className="nav-link"
-                      to={"https://www.facebook.com/"}
-                      target="_blank"
-                    >
-                      <i className="fab fa-facebook"></i>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      className="nav-link"
-                      to={"https://www.tiktok.com/"}
-                      target="_blank"
-                    >
-                      <i className="fab fa-tiktok"></i>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      className="nav-link"
-                      to={"https://www.twitter.com/"}
-                      target="_blank"
-                    >
-                      <i className="fab fa-twitter"></i>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      className="nav-link"
-                      to={"https://www.linkedin.com/"}
-                      target="_blank"
-                    >
-                      <i className="fab fa-linkedin"></i>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      className="nav-link"
-                      to={"https://www.youtube.com/"}
-                      target="_blank"
-                    >
-                      <i className="fab fa-youtube"></i>
-                    </Link>
-                  </li>
-                  <li className={`${!token ? "block" : "hidden"}`}>
-                    <Link
-                      className="text-capitalize cursor-pointer"
-                      to={"register"}
-                    >
-                      Register
-                    </Link>
-                  </li>
-                  <li className={`${!token ? "block" : "hidden"}`}>
-                    <Link
-                      className="text-capitalize cursor-pointer"
-                      to={"login"}
-                    >
-                      Login
-                    </Link>
-                  </li>
-                  <li
+          </li>
+          <li className={`${token ? "hidden" : "block"}`}>
+            <Link className="text-capitalize cursor-pointer" to={"login"}>
+              Login
+            </Link>
+          </li>
+          <div className={`${!token ? "hidden" : "block"}`}>
+            <DropdownMenu>
+              <DropdownMenuTrigger>
+                <div className="capitalize text-white w-10 h-10 rounded-full bg-[#C1185A] flex items-center justify-center">
+                  <span> {name ? name[0] : null}</span>
+                </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="right-0">
+                <DropdownMenuLabel>
+                  <h2>{name ? name : null}</h2>
+                  <h3>{email ? email : null}</h3>
+                </DropdownMenuLabel>
+                <DropdownMenuItem>Account</DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>
+                  <button
                     onClick={logOut}
-                    className={`${token ? "block" : "hidden"}`}
+                    
                   >
                     <span className="text-capitalize cursor-pointer">
                       SignOut
                     </span>
-                  </li>
-                </ul>
-              </div>
-              <IconButton
-                variant="text"
-                className="m-auto w-6 text-inherit hover:bg-transparent focus:bg-transparent active:bg-transparent lg:hidden"
-                ripple={false}
-                onClick={() => setOpenNav(!openNav)}
-                placeholder=""
-                onPointerEnterCapture={() => {}}
-                onPointerLeaveCapture={() => {}}
-              >
-                {openNav ? (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    className="h-full w-6"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                ) : (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-full w-10"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M4 6h16M4 12h16M4 18h16"
-                    />
-                  </svg>
-                )}
-              </IconButton>
-            </div>
+                  </button>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
-          <Collapse open={openNav} className="">
-            {navList}
-            <div className="flex gap-2">
-              <ul className=" gap-4 list-none">
-                <li className={`${!token ? "block" : "hidden"}`}>
-                  <Link
-                    className="text-capitalize cursor-pointer"
-                    to={"register"}
-                  >
-                    Register
-                  </Link>
-                </li>
-                <li className={`${!token ? "block" : "hidden"}`}>
-                  <Link className="text-capitalize cursor-pointer" to={"login"}>
-                    Login
-                  </Link>
-                </li>
-                <li
-                  onClick={logOut}
-                  className={`${token ? "block" : "hidden"}`}
-                >
-                  <span className="text-capitalize cursor-pointer">
-                    SignOut
-                  </span>
-                </li>
-              </ul>
+        </ul>
+        <div className="lg:hidden flex ">
+          <i
+            onClick={displayMenueBars}
+            className={`fa-solid ${
+              showMenu ? "fa-xmark" : "fa-bars"
+            } cursor-pointer text-2xl transition-opacity duration-300`}
+          ></i>
+          <ul
+            className={`absolute end-0 top-full bg-light-color py-3 w-full text-center list-none  gap-4 flex-col ${
+              showMenu ? "flex" : "hidden"
+            }`}
+          >
+            <div className={`${token ? "flex" : "hidden"} gap-4 flex-col`}>
+              <li>
+                <Link to={"home"}>Home</Link>
+              </li>
+              <li>
+                <Link to={"cart"}>Cart</Link>
+              </li>
+              <li>
+                <Link to={"products"}>Products</Link>
+              </li>
+              <li>
+                <Link to={"categories"}>Categories</Link>
+              </li>
+              <li>
+                <Link to={"brands"}>Brands</Link>
+              </li>
             </div>
-          </Collapse>
+            <li className={`${token ? "hidden" : "block"}`}>
+              <Link className="text-capitalize cursor-pointer" to={"register"}>
+                Register
+              </Link>
+            </li>
+            <li className={`${token ? "hidden" : "block"}`}>
+              <Link className="text-capitalize cursor-pointer" to={"login"}>
+                Login
+              </Link>
+            </li>
+            <li onClick={logOut} className={`${!token ? "hidden" : "block"}`}>
+              <span className="text-capitalize cursor-pointer">SignOut</span>
+            </li>
+          </ul>
         </div>
-      </Navbar>
-    </>
+      </div>
+    </nav>
   );
 };
 export default NavBar;

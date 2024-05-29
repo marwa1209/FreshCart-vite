@@ -1,8 +1,10 @@
-import { useSignIn } from '@/services/mutaions';
-import { zodResolver } from '@hookform/resolvers/zod';
-import  { FC, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+/** @format */
+
+import { useSignIn } from "@/services/mutaions";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { FC, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -16,36 +18,33 @@ import { Input } from "@/components/ui/input";
 interface LoginProps {}
 
 const Login: FC<LoginProps> = () => {
-    const [errorMessage, setErrorMessage] = useState<string>("");
-    const { mutate, isPending } = useSignIn();
-      const formSchema = z
-        .object({
-          email: z.string().min(1, { message: "email is required" }),
-          password: z
-            .string()
-            .min(1, { message: "Password is required" })
-        })
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const { mutate, isPending } = useSignIn();
+  const formSchema = z.object({
+    email: z.string().min(1, { message: "email is required" }),
+    password: z.string().min(1, { message: "Password is required" }),
+  });
 
-      const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
-        defaultValues: {
-          email: "",
-          password: "",
-        },
-        mode: "all",
-      });
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+    mode: "all",
+  });
 
-      const onSubmit = (values: z.infer<typeof formSchema>) => {
-        mutate(values, {
-          onError: (error) => {
-            if ((error as any)?.response?.data?.message) {
-              console.log((error as any)?.response?.data?.message);
-              setErrorMessage((error as any).response.data.message);
-              console.log(errorMessage);
-            }
-          },
-        });
-      };
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    mutate(values, {
+      onError: (error) => {
+        if ((error as any)?.response?.data?.message) {
+          console.log((error as any)?.response?.data?.message);
+          setErrorMessage((error as any).response.data.message);
+          console.log(errorMessage);
+        }
+      },
+    });
+  };
   return (
     <div className="my-5">
       <h1 className="text-2xl py-4">Login Now</h1>
@@ -106,7 +105,6 @@ const Login: FC<LoginProps> = () => {
       </h3>
     </div>
   );
-}
-
+};
 
 export default Login;

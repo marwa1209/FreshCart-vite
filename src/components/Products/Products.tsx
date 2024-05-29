@@ -60,7 +60,7 @@ const Products: FC<ProductsProps> = () => {
   }
   if (data?.pages[0]?.data?.length > 0) {
     return (
-      <div className="sm:my-16 m-auto">
+      <div className="my-5 sm:my-16 m-auto">
         <h2>OUR Products</h2>
         {data.pages.map((page: any, pageIndex: number) => (
           <div key={pageIndex}>
@@ -118,7 +118,7 @@ const Products: FC<ProductsProps> = () => {
                           alt={product.title}
                         />
                         <div className="absolute bottom-0 left-0 flex w-full px-4 pb-4 ">
-                          <div className="flex-col m-auto items-start rounded-md flex sm:items-center  border bg-white/70 p-1 text-xs font-semibold text-black">
+                          <div className="flex-col w-[75%] py-3 mx-auto items-start rounded-md flex sm:items-center sm:flex-row sm:mx-0  border bg-white/70 p-1 text-xs font-semibold text-black">
                             <h3 className="me-4 pl-2 mb-2">
                               {product.title.split(" ").slice(0, 2).join(" ")}{" "}
                               {product.category.name
