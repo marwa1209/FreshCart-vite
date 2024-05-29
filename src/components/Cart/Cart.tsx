@@ -2,12 +2,12 @@
 
 import { FC } from "react";
 import Loader from "../Loader/Loader";
-import { useGetCart } from "@/services/queries";
+import { useGetCart } from "@/hooks/use-cart";
 import PriceFormat from "../PriceFormat/PriceFormat";
 import { Link } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteFromCart, updateProductQuan } from "@/services/cart";
+import { deleteFromCart, updateProductQuan } from "@/hooks/use-cart";
 interface CartProps {}
 interface product {
   id: number;

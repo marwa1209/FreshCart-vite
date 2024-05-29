@@ -4,10 +4,10 @@ import { FC } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import PriceFormat from "../PriceFormat/PriceFormat";
 import Loader from "../Loader/Loader";
-import { useProducts } from "@/services/queries";
 import toast, { Toaster } from "react-hot-toast";
 import { useMutation } from "@tanstack/react-query";
 import { addToCart } from "@/services/cart";
+import { useFeaturedProducts } from "@/hooks/use-featured-products";
 
 interface FeaturedProductsProps {}
 interface product {
@@ -21,7 +21,7 @@ interface product {
 }
 const FeaturedProducts: FC<FeaturedProductsProps> = () => {
   const navigate = useNavigate();
-  const { data, error, isError, isPending } = useProducts();
+  const { data, error, isError, isPending } = useFeaturedProducts();
   console.log(data);
   const { mutate } = useMutation({
     mutationFn: (id: number) => addToCart(id),

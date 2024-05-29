@@ -4,8 +4,8 @@ import { FC, useEffect } from "react";
 import { Link } from "react-router-dom";
 import PriceFormat from "../PriceFormat/PriceFormat";
 import Loader from "../Loader/Loader";
-import { useProductsInfinite } from "@/services/queries";
 import { useInView } from "react-intersection-observer";
+import { useProducts } from "@/hooks/use-products";
 interface ProductsProps {}
 
 interface product {
@@ -26,7 +26,7 @@ const Products: FC<ProductsProps> = () => {
     fetchNextPage,
     isFetchingNextPage,
     hasNextPage,
-  } = useProductsInfinite();
+  } = useProducts();
   const { ref, inView } = useInView();
   useEffect(() => {
     if (inView && hasNextPage) {

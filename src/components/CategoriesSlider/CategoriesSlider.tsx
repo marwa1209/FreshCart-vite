@@ -1,9 +1,9 @@
 /** @format */
 
-import { useCategories } from "@/services/queries";
 import { FC } from "react";
 import Slider from "react-slick";
 import Loader from "../Loader/Loader";
+import { useCategories } from "@/hooks/use-categories";
 
 interface CategoriesSliderProps {}
 
@@ -12,7 +12,7 @@ interface categorey {
   name:string;
 }
 const CategoriesSlider: FC<CategoriesSliderProps> = () => {
-   const {isPending,data  } =useCategories();
+   const { isPending, data } = useCategories();
   let settings = {
     dots: false,
     infinite: true,
