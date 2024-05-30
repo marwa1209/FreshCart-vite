@@ -10,12 +10,11 @@ const client = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL,
 });
 
-
 client.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const token = localStorage.getItem("userToken");
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+      config.headers["token"] = token;
     }
     return config;
   },

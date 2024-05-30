@@ -1,14 +1,14 @@
 /** @format */
 
 import { useInfiniteQuery } from "@tanstack/react-query";
-import axios from "axios";
+import axiosInstance from "@/config/axios.config";
 
 export const getProductsInfinite = async ({
   pageParam,
 }: {
   pageParam: number;
 }) => {
-  const response = await axios.get(
+  const response = await axiosInstance.get(
     `${import.meta.env.VITE_BASE_URL}/api/v1/products?page=${pageParam}`
   );
   return response.data;

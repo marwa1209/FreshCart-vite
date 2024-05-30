@@ -1,9 +1,9 @@
 /** @format */
 
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import axiosInstance from "@/config/axios.config";
 export const getProducts = async (params?: any) => {
-  const response = await axios.get(
+  const response = await axiosInstance.get(
     `${import.meta.env.VITE_BASE_URL}/api/v1/products`,
     { params: { limit: 12, ...params } }
   );

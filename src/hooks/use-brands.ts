@@ -1,9 +1,9 @@
 /** @format */
 
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import axiosInstance from "@/config/axios.config";
 export const getBrands = async () => {
-  const response = await axios.get(
+  const response = await axiosInstance.get(
     `${import.meta.env.VITE_BASE_URL}/api/v1/Brands`
   );
   return response.data;
