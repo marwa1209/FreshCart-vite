@@ -11,13 +11,7 @@ export const addToCart = async (id: number) => {
   );
   return response.data;
 };
-//get
-export const getCart = async () => {
-  const response = await axiosInstance.get(
-    `${import.meta.env.VITE_BASE_URL}/api/v1/cart`
-  );
-  return response.data;
-};
+
 //delete
 export const deleteFromCart = async (id: number) => {
   const response = await axiosInstance.delete(
@@ -30,6 +24,13 @@ export const updateProductQuan = async (id: any, count: number) => {
   const response = await axiosInstance.put(
     `${import.meta.env.VITE_BASE_URL}/api/v1/cart/${id}`,
     { count }
+  );
+  return response.data;
+};
+//get
+export const getCart = async () => {
+  const response = await axiosInstance.get(
+    `${import.meta.env.VITE_BASE_URL}/api/v1/cart`
   );
   return response.data;
 };

@@ -1,4 +1,8 @@
-/** @type {import('tailwindcss').Config} */
+/**
+ * @format
+ * @type {import('tailwindcss').Config}
+ */
+
 // eslint-disable-next-line no-undef
 module.exports = {
   darkMode: ["class"],
@@ -27,10 +31,20 @@ module.exports = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        marquee: {
+          from: { transform: "translateX(0)" },
+          to: { transform: "translateX(calc(-100% - var(--gap)))" },
+        },
+        "marquee-vertical": {
+          from: { transform: "translateY(0)" },
+          to: { transform: "translateY(calc(-100% - var(--gap)))" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        marquee: "marquee var(--duration) linear infinite",
+        "marquee-vertical": "marquee-vertical var(--duration) linear infinite",
       },
       colors: {
         "main-color": "#0aad0a",
@@ -77,6 +91,5 @@ module.exports = {
       },
     },
   },
-  // eslint-disable-next-line no-undef
   plugins: [require("tailwindcss-animate")],
 };

@@ -3,11 +3,38 @@
 import { FC } from "react";
 import Loader from "../Loader/Loader";
 import { useBrands } from "@/hooks/use-brands";
+import Marquee from "../marquee/marquee";
+import { cn } from "@/lib/utils";
+
+const ReviewCard = ({ img, name }: { img: string; name: string }) => {
+  return (
+    <figure
+      className={cn(
+        "relative w-64 cursor-pointer overflow-hidden rounded-xl border p-4",
+        // light styles
+        "border-gray-950/[.1] bg-gray-950/[.01] hover:bg-gray-950/[.05]",
+        // dark styles
+        "dark:border-gray-50/[.1] dark:bg-gray-50/[.10] dark:hover:bg-gray-50/[.15]"
+      )}
+    >
+      <div className="flex flex-row items-center gap-2">
+        <img className="rounded-full" width="32" height="32" alt="" src={img} />
+        <div className="flex flex-col">
+          <figcaption className="text-sm font-medium dark:text-white">
+            {name}
+          </figcaption>
+        </div>
+      </div>
+    </figure>
+  );
+};
 
 interface BrandsProps {}
 
 const Brands: FC<BrandsProps> = () => {
   const { data, isError, error, isPending } = useBrands();
+  const firstRow = data?.data.slice(0, data?.data.length / 2);
+  const secondRow = data?.data.slice(data?.data.length / 2);
   if (isPending) {
     return (
       <>
@@ -20,36 +47,30 @@ const Brands: FC<BrandsProps> = () => {
   }
   if (data?.data.length === 0) {
     return (
-      <div className="container m-auto my-12 bg-light-color p-3 ">
+      <div className=" m-auto my-12 bg-light-color p-3 ">
         <h1> No Brands</h1>
       </div>
     );
   }
   if (data?.data.length > 0) {
     return (
-      <div className=" my-16 container m-auto">
+      <>
         <h2>OUR brands</h2>
-        <div className="flex flex-wrap">
-          {data?.data.map((brand: any) => (
-            <div
-              key={brand._id}
-              className="item xl:w-1/6 lg:w-1/3 md:w-3/6 min-[420px]:w-full my-3"
-            >
-              <div className="px-4  cursor-pointer">
-                <img
-                  className="mb-3 h-64  xl:w-full  min-[420px]:w-[80%] block m-auto"
-                  src={brand.image}
-                  alt={brand.name}
-                />
-                <h3 className="text-sm text-main-color">{brand.slug}</h3>
-                <h4 className="text-xl mb-4">
-                  {brand.name.split(" ").slice(0, 2).join(" ")}
-                </h4>
-              </div>
-            </div>
-          ))}
+        <div className="relative flex h-full w-full flex-col items-center justify-center overflow-hidden rounded-lg  py-20 ">
+          <Marquee pauseOnHover className="[--duration:50s]">
+            {firstRow.map((brand: any) => (
+              <ReviewCard key={brand._id} img={brand.image} name={brand.name} />
+            ))}
+          </Marquee>
+          <Marquee reverse pauseOnHover className="[--duration:50s]">
+            {secondRow.map((brand: any) => (
+              <ReviewCard key={brand._id} img={brand.image} name={brand.name} />
+            ))}
+          </Marquee>
+          <div className="pointer-events-none absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-white dark:from-background"></div>
+          <div className="pointer-events-none absolute inset-y-0 right-0 w-1/3 bg-gradient-to-l from-white dark:from-background"></div>
         </div>
-      </div>
+      </>
     );
   }
 };
