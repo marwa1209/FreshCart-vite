@@ -1,6 +1,6 @@
 /** @format */
 
-import { FC, useCallback, useRef } from "react";
+import { FC, Fragment, useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
 import PriceFormat from "../PriceFormat/PriceFormat";
 import Loader from "../Loader/Loader";
@@ -62,9 +62,9 @@ const Products: FC<ProductsProps> = () => {
     return (
       <div className="my-5 sm:my-16 m-auto">
         <h2>OUR Products</h2>
+        <div className="grid grid-flow-row gap-4 grid-cols-1 xl:grid-cols-3 sm:grid-cols-2 ">
         {data.pages.map((page: any, pageIndex: number) => (
-          <div key={pageIndex}>
-            <div className="grid grid-flow-row gap-4 grid-cols-1 xl:grid-cols-3 sm:grid-cols-2 ">
+          <Fragment key={pageIndex}>
               {page.data.map((product: product, index: number) => {
                 //if lastElement
                 if (
@@ -75,11 +75,11 @@ const Products: FC<ProductsProps> = () => {
                     <div
                       key={product.id}
                       className="aspect-square transition-all animate-fadeIn"
+                        ref={lastElementRef}
                     >
                       <Link to={"/details/" + product.id}>
                         <div
                           className="group flex flex-col h-full w-full items-center justify-center overflow-hidden rounded-lg border hover:border-blue-600 relative "
-                          ref={lastElementRef}
                         >
                           <img
                             className="object-contain w-full h-full transition duration-300 ease-in-out group-hover:scale-105"
@@ -136,9 +136,9 @@ const Products: FC<ProductsProps> = () => {
                   </div>
                 );
               })}
-            </div>
-          </div>
+          </Fragment>
         ))}
+        </div>
 
         {isFetchingNextPage && (
           <div className="mt-3 flex justify-center">
