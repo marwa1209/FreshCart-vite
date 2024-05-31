@@ -6,8 +6,9 @@ import PriceFormat from "../PriceFormat/PriceFormat";
 import Loader from "../Loader/Loader";
 import toast, { Toaster } from "react-hot-toast";
 import { useMutation } from "@tanstack/react-query";
-import { addToCart } from "@/hooks/use-cart";
 import { useFeaturedProducts } from "@/hooks/use-featured-products";
+import { addToCart } from "@/services/mutations/cart";
+
 
 interface FeaturedProductsProps {}
 interface product {

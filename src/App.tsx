@@ -13,6 +13,7 @@ import Login from "./components/Login/Login";
 import Register from "./components/Register/Register";
 import NotFound from "./components/NotFound/NotFound";
 import TokenContextProvider from "./context/tokenContext.tsx";
+import Allorders from "./components/allorders/allorders.tsx";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import {
@@ -20,6 +21,8 @@ import {
   LayoutProtectedRoutes,
 } from "./components/AllProtectedRoutes/AuthProtectedRoute/AuthProtectedRoutes.tsx";
 import ProductInfo from "./components/ProductInfo/ProductInfo.tsx";
+import { CartProvider } from "./context/cartContext.tsx";
+import Payment from "./components/Payment/Payment.tsx";
 //react query
 const queryClient = new QueryClient();
 function App() {
@@ -49,6 +52,7 @@ function App() {
         { path: "products", element: <Products /> },
         { path: "categories", element: <Categories /> },
         { path: "brands", element: <Brands /> },
+        { path: "allorders", element: <Allorders /> },
         { path: "details/:id", element: <ProductInfo /> },
         {
           path: "cart",
@@ -58,7 +62,14 @@ function App() {
             </LayoutProtectedRoutes>
           ),
         },
-
+        {
+          path: "payment",
+          element: (
+            <LayoutProtectedRoutes>
+              <Payment />
+            </LayoutProtectedRoutes>
+          ),
+        },
         { path: "*", element: <NotFound /> },
       ],
     },
@@ -68,7 +79,9 @@ function App() {
     <>
       <QueryClientProvider client={queryClient}>
         <TokenContextProvider>
-          <RouterProvider router={MyRouter}></RouterProvider>
+          <CartProvider>
+            <RouterProvider router={MyRouter}></RouterProvider>
+          </CartProvider>
         </TokenContextProvider>
       </QueryClientProvider>
     </>

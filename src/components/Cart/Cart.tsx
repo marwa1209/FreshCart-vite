@@ -2,12 +2,12 @@
 
 import { FC } from "react";
 import Loader from "../Loader/Loader";
-import { useGetCart } from "@/hooks/use-cart";
+import { useCart } from "@/hooks/use-cart";
 import PriceFormat from "../PriceFormat/PriceFormat";
 import { Link } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteFromCart, updateProductQuan } from "@/hooks/use-cart";
+import { updateProductQuan, deleteFromCart } from "@/services/mutations/cart";
 interface CartProps {}
 interface product {
   id: number;
@@ -23,8 +23,7 @@ interface product {
 const Cart: FC<CartProps> = () => {
   //getData
   const queryClient = useQueryClient();
-  let { isPending, data, isError ,error} = useGetCart();
-  console.log(error);
+  let { isPending, data, isError } = useCart();
   //delete
   const { mutate: mutateDelete } = useMutation({
     mutationFn: (id: any) => deleteFromCart(id),
@@ -32,9 +31,10 @@ const Cart: FC<CartProps> = () => {
       queryClient.invalidateQueries({ queryKey: ["cartItems"] });
     },
     onError: () => {
-      toast.error("error");
+      toast.error("Error deleting item");
     },
   });
+
   function deleteCartItem(id: any): void {
     mutateDelete(id);
   }
@@ -135,8 +135,8 @@ const Cart: FC<CartProps> = () => {
           </div>
         ))}
         <Link
-          to={"/checkout/" + data?.data._id}
-          className="btn-main lg:w-3/12 md:w-4/12 min-[420px]:w-1/2  text-center"
+          to={"/payment"}
+          className="btn-main lg:w-3/12 md:w-4/12 w-1/2  text-center"
         >
           checkout
         </Link>
